@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head id="head">
+    <title>MyTriApp</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+
+    <h1 class="text-center">My Tri App</h1>
+
+    <form id="login-form">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" required autofocus name="email" id="email" autocomplete="off" placeholder="Email" />
+            <label for="email">Email address</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" required name="password" id="password" autocomplete="off" placeholder="Password" />
+            <label for="password">Password</label>
+        </div>
+        <button class="btn btn-primary" type="submit">Log in</button>
+    </form>
+
+    <button class="btn btn-primary" onclick="window.location.href='register.html'">Register</button>
+</body>
+</html>
+<script>
+    async function login(event) {
+        event.preventDefault();
+        var formData = new FormData(event.target);
+
+        const url = "api/Auth/login";
+        const options = {
+            method: 'POST',
+            body: formData
+        }
+
+        const result = await fetch(url, options, false).then(res => res.text()).then(res => {
+            localStorage.setItem('token', res);
+        });
+
+
+        console.log(result);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        //if (localStorage.getItem('token') != null) {
+        //    window.location.href = "https://localhost:7201/homepage.html";
+        //}
+
+        let form = document.querySelector("#login-form");
+        form.addEventListener("submit", login);
+    });
+
+</script>
