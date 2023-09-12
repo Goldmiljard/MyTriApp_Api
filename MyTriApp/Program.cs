@@ -1,10 +1,6 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Microsoft.IdentityModel.Tokens;
 using MyTriApp.Data;
 using MyTriApp.Extensions;
@@ -108,12 +104,5 @@ app.UseAuthorization();
 //and before controllers
 
 app.MapControllers();
-
-app.UseDefaultFiles(new DefaultFilesOptions
-{
-    DefaultFileNames = new List<string> { "index.html" }
-});
-
-app.UseStaticFiles();
 
 app.Run();
