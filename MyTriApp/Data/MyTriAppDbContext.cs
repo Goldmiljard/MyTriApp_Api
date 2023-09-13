@@ -2,7 +2,6 @@
 using MyTriApp.Data.Entities;
 using MyTriApp.Data.Mappings;
 using MyTriApp.Secrets;
-using System.Diagnostics;
 
 namespace MyTriApp.Data
 {
@@ -22,7 +21,6 @@ namespace MyTriApp.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = _secretsProvider.GetSecretAsync("DbConnectionString").Result;
-            Debug.WriteLine(connectionString);
             Console.WriteLine(connectionString);
             optionsBuilder.UseSqlServer(connectionString);
             base.OnConfiguring(optionsBuilder);
