@@ -34,9 +34,9 @@ if (builder.Environment.IsProduction())
     {
         x.TokenValidationParameters = new TokenValidationParameters  
         {
-            ValidIssuer = secretClient.GetSecret("JWT_Issuer").Value.Value,
-            ValidAudience = secretClient.GetSecret("JWT_Audience").Value.Value,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretClient.GetSecret("JWT_Key").Value.Value)),
+            ValidIssuer = secretClient.GetSecret("JWT-Issuer").Value.Value,
+            ValidAudience = secretClient.GetSecret("JWT-Audience").Value.Value,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretClient.GetSecret("JWT-Key").Value.Value)),
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
