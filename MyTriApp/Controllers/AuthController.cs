@@ -70,7 +70,7 @@ namespace MyTriApp.Controllers
                     return Unauthorized();
                 }
 
-                var token = _tokenService.GetUserToken(user);
+                var token = await _tokenService.GetUserToken(user);
 
                 return Ok(token);
             }            
