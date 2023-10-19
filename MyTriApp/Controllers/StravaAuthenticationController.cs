@@ -13,11 +13,13 @@ namespace MyTriApp.Controllers
     {
         private readonly IUserService _userService;
         private readonly IStravaAPI _stravaAPI;
+        private readonly IStravaAccessTokenService _stravaAccessTokenService;
 
-        public StravaAuthenticationController(IUserService userService, IStravaAPI stravaAPI)
+        public StravaAuthenticationController(IUserService userService, IStravaAPI stravaAPI, IStravaAccessTokenService stravaAccessTokenService)
         {
             _userService = userService;
             _stravaAPI = stravaAPI;
+            _stravaAccessTokenService = stravaAccessTokenService;
         }
 
         [HttpGet]
@@ -61,9 +63,9 @@ namespace MyTriApp.Controllers
                 return BadRequest();
             }
 
-            user.StravaAccessToken = StravaAccessToken.From(stravaAccessTokenDTO, user.ExternalId);
+            var stravaAccessToken = StravaAccessToken.From(stravaAccessTokenDTO, user.ExternalId);
 
-            await _userService.UpdateUser(user);
+            await _stravaAccessTokenService.CreateStravaAccessToken(stravaAccessToken);
 
             return Ok();
         }

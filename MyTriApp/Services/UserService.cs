@@ -67,7 +67,6 @@ namespace MyTriApp.Services
             userToUpdate.AccessToken = user.AccessToken;
             userToUpdate.ExpirationDate = user.ExpirationDate;
             userToUpdate.AccessToken = user.AccessToken;
-            userToUpdate.StravaAccessToken = user.StravaAccessToken;
 
             await _context.SaveChangesAsync();
 

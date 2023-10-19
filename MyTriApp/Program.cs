@@ -75,6 +75,7 @@ builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStravaAPI, StravaAPI>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IStravaAccessTokenService, StravaAccessTokenService>();
 
 builder.Services.AddCors(options =>
 {

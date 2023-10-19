@@ -14,13 +14,15 @@ namespace MyTriApp.Controllers
         private readonly IConfiguration _configuration;
         private IActivityService _activityService;
         private IStravaAPI _stravaAPI;
+        private IStravaAccessTokenService _stravaAccessTokenService;
 
-        public ActivitiesController(IUserService userService, IConfiguration configuration, IActivityService activityService, IStravaAPI stravaAPI)
+        public ActivitiesController(IUserService userService, IConfiguration configuration, IActivityService activityService, IStravaAPI stravaAPI, IStravaAccessTokenService stravaAccessTokenService)
         {
             _userService = userService;
             _configuration = configuration;
             _activityService = activityService;
             _stravaAPI = stravaAPI;
+            _stravaAccessTokenService = stravaAccessTokenService;
         }
 
         [HttpGet]
@@ -47,8 +49,8 @@ namespace MyTriApp.Controllers
                 if (DateTimeOffset.FromUnixTimeSeconds(user.StravaAccessToken.ExpiresAt).DateTime < DateTime.Now)
                 {
                     var accessTokenDTO = await _stravaAPI.RefreshStravaAccessToken(user.StravaAccessToken);
-                    user.StravaAccessToken = StravaAccessToken.From(accessTokenDTO, user.ExternalId);
-                    await _userService.UpdateUser(user);
+                    var stravaAccessToken = StravaAccessToken.From(accessTokenDTO, user.ExternalId);
+                    await _stravaAccessTokenService.UpdateStravaAccessToken(stravaAccessToken);
                 }
                 var activityDTOs = await _stravaAPI.GetActivities(user.StravaAccessToken);
                 //convert to activity entity
