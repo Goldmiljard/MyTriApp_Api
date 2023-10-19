@@ -1,21 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
-using MyTriApp.Data.Entities;
+﻿using MyTriApp.Data.Entities;
+using MyTriApp.Secrets;
 using MyTriApp.Services.DTOs;
-using MyTriApp.Services.Interfaces;
 using Newtonsoft.Json;
 using RestSharp;
 using System.Net;
-using System.Reflection.PortableExecutable;
 
 namespace MyTriApp.Strava_API
 {
     public class StravaAPI : IStravaAPI
     {
-        private readonly IConfiguration _configuration;
+        private readonly SecretsProvider _secretsProvider;
 
-        public StravaAPI(IConfiguration configuration, IUserService userService)
+        public StravaAPI(SecretsProvider secretsProvider)
         {
-            _configuration = configuration;
+            _secretsProvider = secretsProvider;
         }
 
         public async Task<AccessTokenDTO> GetStravaAccessToken(string authorizationCode)
@@ -24,7 +22,7 @@ namespace MyTriApp.Strava_API
 
             var request = new RestRequest("/oauth/token?", Method.Post);
             request.AddParameter("client_id", "111830");
-            request.AddParameter("client_secret", _configuration.GetValue<string>("StravaClientSecret")!);
+            request.AddParameter("client_secret", _secretsProvider.GetSecretAsync("StravaClientSecret").Result);
             request.AddParameter("code", authorizationCode);
             request.AddParameter("grant_type", "authorization_code");
             request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
@@ -68,7 +66,7 @@ namespace MyTriApp.Strava_API
 
             var request = new RestRequest("/oauth/token?", Method.Post);
             request.AddParameter("client_id", "111830");
-            request.AddParameter("client_secret", _configuration.GetValue<string>("StravaClientSecret")!);
+            request.AddParameter("client_secret", _secretsProvider.GetSecretAsync("StravaClientSecret").Result);
             request.AddParameter("grant_type", "refresh_token");
             request.AddParameter("refresh_token", accessToken.RefreshToken);
             request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
