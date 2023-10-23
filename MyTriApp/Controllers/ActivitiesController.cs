@@ -11,15 +11,13 @@ namespace MyTriApp.Controllers
     public class ActivitiesController : ControllerBase
     {
         private IUserService _userService;
-        private readonly IConfiguration _configuration;
         private IActivityService _activityService;
         private IStravaAPI _stravaAPI;
         private IStravaAccessTokenService _stravaAccessTokenService;
 
-        public ActivitiesController(IUserService userService, IConfiguration configuration, IActivityService activityService, IStravaAPI stravaAPI, IStravaAccessTokenService stravaAccessTokenService)
+        public ActivitiesController(IUserService userService, IActivityService activityService, IStravaAPI stravaAPI, IStravaAccessTokenService stravaAccessTokenService)
         {
             _userService = userService;
-            _configuration = configuration;
             _activityService = activityService;
             _stravaAPI = stravaAPI;
             _stravaAccessTokenService = stravaAccessTokenService;
