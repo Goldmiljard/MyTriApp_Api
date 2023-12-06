@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MyTriApp.Data;
 using MyTriApp.Data.Entities;
-using MyTriApp.DTO;
 using MyTriApp.Services.Interfaces;
 
 namespace MyTriApp.Services
@@ -16,12 +14,6 @@ namespace MyTriApp.Services
             _context = context;
         }
 
-        public async Task<bool> LoginUser(LoginData loginData)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginData.Email && u.PasswordHash == loginData.Password);
-            return user != null;
-        }
-
         public async Task<User> CreateUser(User user)
         {
             var result = await _context.AddAsync(user);
@@ -29,28 +21,20 @@ namespace MyTriApp.Services
             return user;
         }
 
-        public async Task<bool> DeleteUserById(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return false;
-            }
-            _context.Remove(user);
-
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
         public async Task<List<User>> GetAllUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Include(u => u.StravaAccessToken).ToListAsync();
         }
 
         public async Task<User?> GetUserById(Guid userGuid)
         {
             return await _context.Users.Include(e => e.StravaAccessToken).FirstOrDefaultAsync(x => x.ExternalId == userGuid);
-            
+        }
+
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user;
         }
 
         public async Task<User?> UpdateUser(User user)
@@ -72,10 +56,18 @@ namespace MyTriApp.Services
 
             return userToUpdate;
         }
-        public async Task<User?> GetUserByEmail(string email)
+
+        public async Task<bool> DeleteUserById(int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            return user;
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            _context.Remove(user);
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

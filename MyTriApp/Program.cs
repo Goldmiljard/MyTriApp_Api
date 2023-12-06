@@ -7,14 +7,21 @@ using MyTriApp.Extensions;
 using MyTriApp.Services;
 using MyTriApp.Services.Interfaces;
 using MyTriApp.Strava_API;
+using Newtonsoft.Json;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+var isDevelopment = builder.Environment.IsDevelopment();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var config = builder.Configuration;
 var secretClient = new SecretClient(new Uri(config.GetSection("KeyVault")["VaultUri"]), new DefaultAzureCredential());
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,7 +30,7 @@ builder.Services.AddSecretServices(config);
 builder.Services.AddDbContext<MyTriAppDbContext>();
 builder.Services.AddScoped<IMyTriAppDbContext, MyTriAppDbContext>();
 
-if (builder.Environment.IsProduction())
+if (!isDevelopment)
 {
     builder.Services.AddAuthentication(x =>
     {
@@ -45,7 +52,7 @@ if (builder.Environment.IsProduction())
     });
 }
 
-if (builder.Environment.IsDevelopment())
+if (isDevelopment)
 {
     builder.Services.AddAuthentication(x =>
     {
@@ -91,14 +98,14 @@ var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (isDevelopment)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseSwagger();
-app.UseSwaggerUI();
+//app.UseSwagger();
+//app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

@@ -10,6 +10,7 @@ namespace MyTriApp.Data.Entities
         public int ExpiresIn { get; set; }
         public string RefreshToken { get; set; } = string.Empty;
         public string AccessToken { get; set; } = string.Empty;
+        public long AthleteId {  get; set; }
         public Guid UserId { get; set; } //required foreign key property
         public User User { get; set; } = null!; // required reference navigation to principal
 
@@ -29,6 +30,7 @@ namespace MyTriApp.Data.Entities
                 ExpiresIn = dto.expires_in,
                 RefreshToken = dto.refresh_token,
                 AccessToken = dto.access_token,
+                AthleteId = dto.athlete.id,
                 UserId = userId
             };
         }

@@ -1,4 +1,5 @@
-﻿using MyTriApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MyTriApp.Data;
 using MyTriApp.Data.Entities;
 
 namespace MyTriApp.Services.Interfaces
@@ -18,6 +19,12 @@ namespace MyTriApp.Services.Interfaces
             await _context.SaveChangesAsync();
             return stravaAccessToken;
         }
+
+        public async Task<StravaAccessToken?> GetStravaAccessToken(long stravaAthleteId)
+        {
+            return await _context.StravaAccessTokens.FirstOrDefaultAsync(x => x.AthleteId == stravaAthleteId);
+        }
+
         public async Task<StravaAccessToken?> UpdateStravaAccessToken(StravaAccessToken stravaAccessToken)
         {
             var stravaAccessTokenToUpdate = await _context.StravaAccessTokens.FindAsync(stravaAccessToken.ExternalId);
@@ -35,6 +42,19 @@ namespace MyTriApp.Services.Interfaces
             await _context.SaveChangesAsync();
 
             return stravaAccessTokenToUpdate;
+        }
+
+        public async Task<bool> DeleteStravaAccessToken(long stravaAthleteId)
+        {
+            var stravaAccessToken = await _context.StravaAccessTokens.FirstAsync(x => x.AthleteId == stravaAthleteId);
+            if (stravaAccessToken == null)
+            {
+                return false;
+            }
+            _context.Remove(stravaAccessToken);
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

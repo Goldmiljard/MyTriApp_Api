@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MyTriApp.Data;
 using MyTriApp.Data.Entities;
+using MyTriApp.DTO;
 using MyTriApp.Services.Interfaces;
 
 namespace MyTriApp.Services
@@ -15,33 +15,65 @@ namespace MyTriApp.Services
             _context = context;
         }
 
-
-        public async Task<List<Activity>> GetActivities(Guid userGuid)
+        public async Task<bool> CreateActivities(List<Activity> activities)
         {
-            var activities = from a in _context.Activities
-                             where a.UserId == userGuid
-                             select a;
-            return await activities.ToListAsync();
-        }
-
-        public async Task<List<Activity>> SaveActivities(List<Activity> activities)
-        {
-            var entityEntries = new List<Activity>();
             foreach (var activity in activities)
             {
-                var entityEntry = await SaveActivity(activity);
-                entityEntries.Add(entityEntry);
+                await CreateActivity(activity);
             }
             await _context.SaveChangesAsync();
 
-            return entityEntries;
+            return true;
         }
 
-        public async Task<Activity> SaveActivity(Activity activity)
+        public async Task<bool> CreateActivity(Activity activity)
         {
-            var activitySaved = await _context.AddAsync(activity);
+            if (!_context.Activities.Where(x => x.StravaId == activity.StravaId).Any())
+            {
+                var entityEntry = await _context.AddAsync(activity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<List<Activity>> GetActivities(Guid userGuid)
+        {
+            var activities = await _context.Activities.Include(a => a.Laps).ToListAsync();
+            return activities;
+        }
+
+        public async Task<Activity?> GetActivityById(long id, Guid userId)
+        {
+            return await _context.Activities.FirstOrDefaultAsync(x => x.StravaId == id && x.UserId == userId);
+        }
+
+        public async Task<bool> UpdateActivity(long activityId, Updates updates)
+        {
+            var activity = await _context.Activities.FirstAsync(x => x.StravaId == activityId);
+            if (updates.title != null)
+            {
+                activity.Name = updates.title;
+            }
+            if (updates.type != null)
+            {
+                activity.SportType = updates.type;
+            }
             await _context.SaveChangesAsync();
-            return activitySaved.Entity;
+            return true;
+        }
+
+        public async Task<bool> DeleteActivity(long activityId)
+        {
+            var activity = await _context.Activities.FirstAsync(x => x.StravaId == activityId);
+            if (activity == null)
+            {
+                return false;
+            }
+            _context.Remove(activity);
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

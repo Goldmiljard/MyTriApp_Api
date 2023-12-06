@@ -12,6 +12,7 @@ namespace MyTriApp.Data
         public DbSet<StravaAccessToken> StravaAccessTokens { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Activity> Activities { get; set; }
+        public DbSet<Lap> Lap { get; set; }
 
         public MyTriAppDbContext(DbContextOptions<MyTriAppDbContext> options, SecretsProvider secretsProvider) : base(options) 
         { 
