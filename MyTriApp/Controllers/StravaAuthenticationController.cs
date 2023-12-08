@@ -48,7 +48,7 @@ namespace MyTriApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AuthenticateStrava([FromQuery] string code)
+        public async Task<IActionResult> AuthenticateStrava([FromBody] string code)
         {
             var stravaAccessTokenDTO = await _stravaAPI.GetStravaAccessToken(code);
 

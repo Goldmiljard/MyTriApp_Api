@@ -7,7 +7,7 @@ using MyTriApp.Extensions;
 using MyTriApp.Services;
 using MyTriApp.Services.Interfaces;
 using MyTriApp.Strava_API;
-using Newtonsoft.Json;
+using MyTriApp.Weather_API;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -81,8 +81,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStravaAPI, StravaAPI>();
+builder.Services.AddScoped<IWeatherAPI, WeatherAPI>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IStravaAccessTokenService, StravaAccessTokenService>();
+builder.Services.AddSingleton<IWeatherAPI>(new WeatherAPI(secretClient.GetSecret("WeatherAPIKey").Value.Value, "https://visual-crossing-weather.p.rapidapi.com/"));
 
 builder.Services.AddCors(options =>
 {

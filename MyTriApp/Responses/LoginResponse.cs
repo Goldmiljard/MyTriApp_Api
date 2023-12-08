@@ -1,4 +1,4 @@
-﻿namespace MyTriApp.DTO
+﻿namespace MyTriApp.Responses
 {
     public class LoginResponse
     {
